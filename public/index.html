@@ -3,12 +3,19 @@
   <head>
     <meta charset="utf-8">
     <title>Kraken Chat</title>
-
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800" rel="stylesheet">
     <link rel="stylesheet" href="./css/main.css">
     <script src="./js/socket.io.js" charset="utf-8"></script>
   </head>
   <body>
-    
+
+    <main id="main">
+    </main>
+
+    <div id="input_area">
+      <input id="message_input" type="text">
+      <button onclick="send()" id="send_button">SEND</button>
+    </div>
 
     <script src="./js/main.js" charset="utf-8"></script>
   </body>

@@ -10,5 +10,7 @@ app.use(express.static('public'));
 var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-  console.log("new connected "+socket.id);
-})
+  socket.on('send', function (m) {
+    socket.broadcast.emit('new_message', m);
+  })
+});
