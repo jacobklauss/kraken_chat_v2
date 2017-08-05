@@ -8,7 +8,7 @@ var server = app.listen(PORT,function () {
 app.use(express.static('public'));
 
 var io = require('socket.io')(server);
-var messages = [];
+var messages = JSON.parse(fs.readFileSync('chat.json', 'utf8'));;
 
 io.on('connection', function (socket) {
   socket.emit("new_connected", messages);
