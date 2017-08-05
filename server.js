@@ -8,7 +8,8 @@ var server = app.listen(PORT,function () {
 app.use(express.static('public'));
 
 var io = require('socket.io')(server);
-var messages = JSON.parse(fs.readFileSync('chat.json', 'utf8'));;
+var messages = JSON.parse(fs.readFileSync('chat.json', 'utf8'));
+var password = "@!kraken2312"
 
 io.on('connection', function (socket) {
   socket.emit("new_connected", messages);
@@ -16,7 +17,15 @@ io.on('connection', function (socket) {
     messages.push(m);
     socket.broadcast.emit('new_message', m);
     saveChat();
-  })
+  });
+  socket.on('clear', function (p) {
+    if(p == password){
+      messages = [];
+      saveChat();
+      socket.emit('clear');
+      socket.broadcast.emit('clear');
+    }
+  });
 });
 
 function saveChat () {

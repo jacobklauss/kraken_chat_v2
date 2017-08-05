@@ -6,8 +6,10 @@ var input = document.getElementById('message_input');
 var main = document.getElementById('main');
 var colorNames = ['orange', 'purple', 'green', 'red', 'blue', 'yellow'];
 var colors = ['rgb(255, 180, 30)', 'rgb(255, 30, 255)', 'rgb(50, 255, 60)', 'rgb(255, 0, 0)', 'rgb(30, 180, 255)', 'rgb(255, 255, 0)'];
-var text_commands = ['!help', '!change colour ', '!change name '];
+var text_commands = ['!help', '!change colour ', '!change name ', '!clear '];
 var command_index = 0;
+
+var input_value;
 var name = Cookies.get('name');
 if(name == "undefined"){
   name = prompt("What is you name?");
@@ -36,6 +38,10 @@ socket.on('new_message', function (m) {
   }else {
     createMessage(false, m);
   }
+});
+socket.on('clear', function () {
+  console.log("clear recieved");
+  main.innerHTML = '';
 });
 
 function send() {
@@ -82,43 +88,21 @@ function commands(message) {
     Cookies.set("name", name);
     window.location.reload();
   }
+  if (m.indexOf("clear") == 0) {
+    var p = m.substr(6);
+    console.log(p + " clear request");
+    socket.emit('clear', p);
+  }
   if (m.indexOf("help") == 0) {
-    setTimeout(function () {
-      var message_object = {
-        m: "The Kraken is here to help! Here's what you can do...",
-        n: "kraken",
-        t: timeNow()
-      }
-      socket.emit("send", message_object);
-      createMessage(false, message_object);
-    }, 400);
-    setTimeout(function () {
-      var message_object = {
-        m: "You can click on a message to reveal who sent it and when.",
-        n: "kraken",
-        t: timeNow()
-      }
-      socket.emit("send", message_object);
-      createMessage(false, message_object);
-    }, 2400);
-    setTimeout(function () {
-      var message_object = {
-        m: "type '! change colour [color]' to change theme.",
-        n: "kraken",
-        t: timeNow()
-      }
-      socket.emit("send", message_object);
-      createMessage(false, message_object);
-    }, 4400);
-    setTimeout(function () {
-      var message_object = {
-        m: "You can choose from 6 colours: red, green, blue, orange, yellow and purple",
-        n: "kraken",
-        t: timeNow()
-      }
-      socket.emit("send", message_object);
-      createMessage(false, message_object);
-    }, 6400);
+    var delay = 2500;
+    var time_out = 800;
+    sendSupport("The Kraken is here to help!", time_out);
+    sendSupport("Click on a message to reveal who sent it and when.", time_out+=delay);
+    sendSupport("type '! change colour [color]' to change theme.", time_out+=delay);
+    sendSupport("You can choose from 6 colours: red, green, blue, orange, yellow and purple", time_out+=delay);
+    sendSupport("enter '!change name [newName]' to change you name", time_out+=delay);
+    sendSupport("type '!clear [password]' to clear the chat", time_out+=delay);
+    sendSupport("You can always see this by entering '!help'", time_out+=delay);
   }
 }
 
@@ -156,21 +140,35 @@ input.addEventListener('keydown', function () {
     send();
   }
   if(event.which == 38){
-    input.value = text_commands[command_index];
-    command_index++;
-    if(command_index >=3){
-      command_index = 0;
+    for (var i = 0; i < text_commands.length; i++) {
+      if(text_commands[i] == input.value){
+        input.value = '';
+        return;
+      }
     }
+
   }
   if(event.which == 40){
+    input_value = input.value;
     input.value = text_commands[command_index];
     command_index--;
     if(command_index <= -1){
-      command_index = 2;
+      command_index = text_commands.length-1;
     }
   }
-
 })
+
+function sendSupport(supportMessage, time_out) {
+  setTimeout(function () {
+    var message_object = {
+      m: supportMessage,
+      n: "kraken",
+      t: timeNow()
+    }
+    socket.emit("send", message_object);
+    createMessage(false, message_object);
+  }, time_out);
+}
 
 function timeNow() {
   var d = new Date(),
