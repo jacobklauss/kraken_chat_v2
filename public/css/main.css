@@ -5,6 +5,7 @@ body {
   font-family: 'Open Sans', Helvetica, sans-serif;
   font-size: 28px;
   --accent: rgb(255, 180, 30);
+  overflow: hidden;
 }
 
 #main {
@@ -92,7 +93,7 @@ body {
   border: none;
 
   font-size: 28px;
-  width: 65%;
+  width: calc(100% - 160px);
 }
 
 #send_button {
@@ -109,7 +110,7 @@ body {
   box-sizing: border-box;
   border: 8px solid var(--accent);
 
-  width: 35%;
+  width: 160px;
 
   animation-name: buttonOut;
   animation-duration: 0.8s;

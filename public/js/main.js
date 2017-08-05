@@ -4,8 +4,8 @@ var socket = io('http://jantschulev.ddns.net:3003');
 var send_button = document.getElementById('send_button');
 var input = document.getElementById('message_input');
 var main = document.getElementById('main');
-var colorNames = ['orange', 'purple', 'green', 'red', 'blue'];
-var colors = ['rgb(255, 180, 30)', 'rgb(255, 30, 255)', 'rgb(50, 255, 60)', 'rgb(255, 0, 0)', 'rgb(30, 180, 255)'];
+var colorNames = ['orange', 'purple', 'green', 'red', 'blue', 'yellow'];
+var colors = ['rgb(255, 180, 30)', 'rgb(255, 30, 255)', 'rgb(50, 255, 60)', 'rgb(255, 0, 0)', 'rgb(30, 180, 255)', 'rgb(255, 255, 0)'];
 var name = Cookies.get('name');
 if(name == "undefined"){
   name = prompt("What is you name?");
@@ -64,6 +64,7 @@ function commands(message) {
         chat_color = i;
         Cookies.set("chat_color", chat_color);
         document.body.style.setProperty('--accent', colors[chat_color]);
+        return;
       }
     }
   }
@@ -76,6 +77,17 @@ function commands(message) {
       }
       socket.emit("send", message_object);
       createMessage(false, message_object);
+    }, 400);
+    setTimeout(function () {
+      var message_object = {
+        m: "You can click on a message to reveal who sent it and when.",
+        n: "kraken",
+        t: timeNow()
+      }
+      socket.emit("send", message_object);
+      createMessage(false, message_object);
+    }, 2400);
+    setTimeout(function () {
       var message_object = {
         m: "type '! change colour [color]' to change theme.",
         n: "kraken",
@@ -83,14 +95,16 @@ function commands(message) {
       }
       socket.emit("send", message_object);
       createMessage(false, message_object);
+    }, 4400);
+    setTimeout(function () {
       var message_object = {
-        m: "You can choose from 5 colours: red, green, blue, orange and purple",
+        m: "You can choose from 6 colours: red, green, blue, orange, yellow and purple",
         n: "kraken",
         t: timeNow()
       }
       socket.emit("send", message_object);
       createMessage(false, message_object);
-    }, 200)
+    }, 6400);
   }
 }
 
