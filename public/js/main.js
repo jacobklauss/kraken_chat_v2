@@ -6,6 +6,8 @@ var input = document.getElementById('message_input');
 var main = document.getElementById('main');
 var colorNames = ['orange', 'purple', 'green', 'red', 'blue', 'yellow'];
 var colors = ['rgb(255, 180, 30)', 'rgb(255, 30, 255)', 'rgb(50, 255, 60)', 'rgb(255, 0, 0)', 'rgb(30, 180, 255)', 'rgb(255, 255, 0)'];
+var text_commands = ['!help', '!change colour ', '!change name '];
+var command_index = 0;
 var name = Cookies.get('name');
 if(name == "undefined"){
   name = prompt("What is you name?");
@@ -29,12 +31,22 @@ socket.on('new_connected', function (m_array) {
   }
 })
 socket.on('new_message', function (m) {
-  createMessage(false, m);
+  if (m.n == name) {
+    createMessage(true, m);
+  }else {
+    createMessage(false, m);
+  }
 });
 
 function send() {
   var message = input.value;
+  input.value = "";
   if(!message.replace(/\s/g, '').length){return}
+
+  if(message.charAt(0)=="!"){
+    commands(message);
+    return;
+  }
 
   var message_object = {
     m: message,
@@ -43,15 +55,11 @@ function send() {
   }
 
   socket.emit("send", message_object);
-  commands(message);
   createMessage(true, message_object);
 }
 
 function commands(message) {
   var m = message;
-  if(m.charAt(0)!="!"){
-    return;
-  }
   if(m.charAt(1)==" "){
     m = m.substr(2);
   }else{
@@ -67,6 +75,12 @@ function commands(message) {
         return;
       }
     }
+  }
+  if (m.indexOf("change name") == 0) {
+    var newName = m.substr(12);
+    name = newName;
+    Cookies.set("name", name);
+    window.location.reload();
   }
   if (m.indexOf("help") == 0) {
     setTimeout(function () {
@@ -133,8 +147,6 @@ function createMessage(colored, message_object) {
   info_container.appendChild(info);
   main.appendChild(container);
   main.appendChild(info_container);
-  input.value = "";
-
 
   main.scrollTop = main.scrollHeight;
 }
@@ -143,6 +155,21 @@ input.addEventListener('keydown', function () {
   if(event.which == 13){
     send();
   }
+  if(event.which == 38){
+    input.value = text_commands[command_index];
+    command_index++;
+    if(command_index >=3){
+      command_index = 0;
+    }
+  }
+  if(event.which == 40){
+    input.value = text_commands[command_index];
+    command_index--;
+    if(command_index <= -1){
+      command_index = 2;
+    }
+  }
+
 })
 
 function timeNow() {
