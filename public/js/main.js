@@ -109,7 +109,6 @@ function commands(message) {
   }
   if (m.indexOf("clear") == 0) {
     var p = m.substr(6);
-    console.log(p + " clear request");
     socket.emit('clear', p);
   }
   if (m.indexOf("help") == 0) {
@@ -125,7 +124,18 @@ function commands(message) {
   }
   if (m.indexOf("krypton ") == 0) {
     user_text = m.substr(8);
-    user_send_message(encrypt(user_text, 1234));
+    var kryptonKey = user_text.slice(user_text.indexOf("key=") + 4, user_text.indexOf(";"));
+    user_message = user_text.substr(user_text.indexOf(";")+2);
+    if(user_text.includes("-d")){
+      var data = {
+        m: decrypt(user_message, kryptonKey),
+        n: 'krypton',
+        t: timeNow()
+      }
+      createMessage(false, data)
+    }else{
+      user_send_message(encrypt(user_message, kryptonKey));
+    }
   }
 }
 
@@ -157,6 +167,18 @@ function createMessage(colored, message_object) {
 
   main.scrollTop = main.scrollHeight;
 }
+
+function scrollDown(){
+  main.scrollTop = main.scrollHeight;
+}
+
+main.addEventListener('scroll', function () {
+  if (main.scrollTop < main.scrollHeight - main.clientHeight*1.8) {
+    document.getElementById('down_arrow').style.display = 'block';
+  }else {
+    document.getElementById('down_arrow').style.display = 'none';
+  }
+})
 
 input.addEventListener('keydown', function () {
   if(event.which == 13){

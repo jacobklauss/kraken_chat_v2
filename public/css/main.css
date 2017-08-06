@@ -73,7 +73,19 @@ body {
   float: right;
 }
 
-
+#down_arrow {
+  position: fixed;
+  left: 50%;
+  bottom: 120px;
+  width: 100px;
+  height: 100px;
+  background-color: transparent;
+  transform: translateX(-50%);
+  display: none;
+}
+path{
+  fill: var(--accent);
+}
 
 #input_area {
   position: fixed;
