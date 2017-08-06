@@ -5,10 +5,10 @@ var send_button = document.getElementById('send_button');
 var input = document.getElementById('message_input');
 var main = document.getElementById('main');
 var colorNames = ['orange', 'purple', 'green', 'red', 'blue', 'yellow'];
-var colors = ['rgb(255, 180, 30)', 'rgb(255, 30, 255)', 'rgb(50, 255, 60)', 'rgb(255, 0, 0)', 'rgb(30, 180, 255)', 'rgb(255, 255, 0)'];
-var text_commands = ['!help', '!change colour ', '!change name ', '!clear '];
+var colors = ['rgb(255, 180, 30)', 'rgb(170, 0, 255)', 'rgb(0, 240, 0)', 'rgb(255, 0, 0)', 'rgb(0, 120, 255)', 'rgb(255, 220, 0)'];
+var text_commands = ['!help', '!colour', '!change colour ', '!change name ', '!clear ', '!krypton ', '!info'];
 var command_index = 0;
-
+var showInfo = false;
 var input_value;
 var name = Cookies.get('name');
 if(name == "undefined"){
@@ -82,6 +82,25 @@ function commands(message) {
       }
     }
   }
+  if (m.indexOf("colour") == 0) {
+    chat_color = Math.floor(Math.random()*colors.length);
+    document.body.style.setProperty('--accent', colors[chat_color]);
+  }
+  if (m.indexOf("info") == 0) {
+    if (showInfo) {
+      showInfo = false;
+      var infos = document.getElementsByClassName('message_info_container');
+      for (var i = 0; i < infos.length; i++) {
+        infos[i].style.display = "none";
+      }
+    }else {
+      showInfo = true;
+      var infos = document.getElementsByClassName('message_info_container');
+      for (var i = 0; i < infos.length; i++) {
+        infos[i].style.display = "block";
+      }
+    }
+  }
   if (m.indexOf("change name") == 0) {
     var newName = m.substr(12);
     name = newName;
@@ -103,6 +122,10 @@ function commands(message) {
     sendSupport("enter '!change name [newName]' to change you name", time_out+=delay);
     sendSupport("type '!clear [password]' to clear the chat", time_out+=delay);
     sendSupport("You can always see this by entering '!help'", time_out+=delay);
+  }
+  if (m.indexOf("krypton ") == 0) {
+    user_text = m.substr(8);
+    user_send_message(encrypt(user_text, 1234));
   }
 }
 
@@ -168,6 +191,15 @@ function sendSupport(supportMessage, time_out) {
     socket.emit("send", message_object);
     createMessage(false, message_object);
   }, time_out);
+}
+function user_send_message(message) {
+  var message_object = {
+    m: message,
+    n: name,
+    t: timeNow()
+  }
+  socket.emit("send", message_object);
+  createMessage(true, message_object);
 }
 
 function timeNow() {

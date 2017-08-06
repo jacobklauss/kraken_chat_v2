@@ -32,7 +32,8 @@ body {
   margin: 5px 20px;
   border-radius: 30px;
   display: inline-block;
-  max-width: 65%;
+  max-width: 70%;
+  user-select: text;
 }
 
 .user_message {
@@ -48,7 +49,7 @@ body {
 }
 
 .message_info {
-  padding: 4px 30px;
+  padding: 0px 30px;
   margin: 0px;
   display: inline-block;
   max-width: 60%;
@@ -58,7 +59,7 @@ body {
 }
 
 .message_container:active + .message_info_container{
-  display: inline-block;
+  display: block;
 }
 
 .message_info_container {
